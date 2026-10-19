@@ -1,0 +1,12 @@
+The InputStream class has two methods called mark() and reset() which
+subclasses of InputStream may or may not support. If an InputStream
+subclass supports the mark() and reset() methods, then that subclass must
+override the markSupported()method to return true. If the method returns
+false, then mark() and reset() are not supported.
+The mark()method sets internally a mark in the InputStream which shows the
+point in the stream to which data has been read so far. Once marked, we can
+continue reading data from the stream. If we want to go back to the point in the
+stream where the mark was set, we can call reset() on the InputStream. The
+InputStream then "rewinds" and go back to the mark, and start returning
+(reading) data from that point again. This will of course result in some data being
+returned more than once from the InputStream.
