@@ -1,0 +1,24 @@
+Flights application
+
+Usage:
+  flights [option] [arguments]
+
+Options:
+
+  -h, --help
+      Display this help message.
+
+  -a, --add <filename.xml>
+      Add passengers from an XML file to the database.
+
+  -f, --flight <origin> <destination> <date>
+      Display available flights between two airports on a specific date.
+
+  -b, --buy <passengerId> <flightId> <date>
+      Buy a ticket for a passenger.
+
+  -o, --origins
+      Display airports with departing flights.
+
+  -d, --destinations <origin>
+      Display reachable destinations from an airport.
