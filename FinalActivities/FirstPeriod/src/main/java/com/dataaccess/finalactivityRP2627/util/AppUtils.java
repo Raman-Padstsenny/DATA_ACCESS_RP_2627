@@ -18,7 +18,7 @@ public class AppUtils {
     private AppUtils() {
     }
 
-    public static String getHelpText() throws IOException {
+    public static String getHelpText() {
 
         try (InputStream inputStream = AppUtils.class.getResourceAsStream(HELP_FILE)) {
 
@@ -27,6 +27,8 @@ public class AppUtils {
             }
 
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException exception) {
+            return "Error: Could not load help text.";
         }
     }
 
