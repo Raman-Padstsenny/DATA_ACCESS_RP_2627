@@ -2,11 +2,11 @@ package com.dataaccess.finalactivityRP2627.model;
 
 public class Passenger {
 
-    private String passportNo;
-    private String firstName;
-    private String lastName;
-    private String address;
-    private String phone;
+    private final String passportNo;
+    private final String firstName;
+    private final String lastName;
+    private final String address;
+    private final String phone;
 
     public Passenger(String passportNo, String firstName, String lastName, String address, String phone) {
         this.passportNo = passportNo;

@@ -32,10 +32,10 @@ public class AppUtils {
         }
     }
 
-    public static void configureLogging() {
+    public static Logger getLogger() {
 
         if (loggingConfigured) {
-            return;
+            return LOGGER;
         }
 
         try {
@@ -44,13 +44,14 @@ public class AppUtils {
             fileHandler.setFormatter(new SimpleFormatter());
 
             LOGGER.addHandler(fileHandler);
-            LOGGER.setLevel(Level.INFO);
+//            LOGGER.setLevel(Level.INFO);
 
             loggingConfigured = true;
 
         } catch (IOException exception) {
             System.err.println("Warning: Could not initialize logging: " + exception.getMessage());
         }
+        return LOGGER;
     }
 
     public static void configureLogger(Logger logger) {

@@ -3,8 +3,9 @@ package com.dataaccess.finalactivityRP2627.service;
 import com.dataaccess.finalactivityRP2627.model.Passenger;
 import com.dataaccess.finalactivityRP2627.repository.DBConnector;
 import com.dataaccess.finalactivityRP2627.repository.Repository;
-import com.dataaccess.finalactivityRP2627.util.PassengerValidator;
-import com.dataaccess.finalactivityRP2627.util.PassengerXmlParser;
+import com.dataaccess.finalactivityRP2627.util.AppUtils;
+import com.dataaccess.finalactivityRP2627.util.Validator;
+import com.dataaccess.finalactivityRP2627.util.XmlParser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,13 +16,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class PassengerService {
-    private static final Logger LOGGER = Logger.getLogger(PassengerService.class.getName());
-
-    private final PassengerXmlParser xmlParser;
-    private final PassengerValidator validator;
+    private final XmlParser xmlParser;
+    private final Validator validator;
     private final Repository repository;
+    private final Logger LOGGER = AppUtils.getLogger();
 
-    public PassengerService(PassengerXmlParser xmlParser, PassengerValidator validator, Repository repository) {
+    public PassengerService(XmlParser xmlParser, Validator validator, Repository repository) {
         this.xmlParser = xmlParser;
         this.validator = validator;
         this.repository = repository;
@@ -44,7 +44,7 @@ public class PassengerService {
         List<Passenger> passengers;
 
         try {
-            passengers = xmlParser.parse(filePath);
+            passengers = xmlParser.parsePassengers(filePath);
         } catch (Exception exception) {
             System.out.println("Error: Could not read the XML file: " + exception.getMessage());
             LOGGER.severe("XML parsing failed: " + exception.getMessage());
@@ -62,7 +62,7 @@ public class PassengerService {
 
         for (int i = 0; i < passengers.size(); i++) {
             Passenger passenger = passengers.get(i);
-            List<String> errors = validator.validate(passenger);
+            List<String> errors = validator.validatePassenger(passenger);
             if (!passportNumbers.add(passenger.getPassportNo())) {
                 errors.add("Duplicate passport number in XML file.");
             }

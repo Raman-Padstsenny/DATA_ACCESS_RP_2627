@@ -1,42 +1,31 @@
 package com.dataaccess.finalactivityRP2627.controller;
 
-import com.dataaccess.finalactivityRP2627.service.PassengerService;
-import com.dataaccess.finalactivityRP2627.util.AppUtils;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.dataaccess.finalactivityRP2627.controller.commands.AddPassengerCommand;
+import com.dataaccess.finalactivityRP2627.controller.commands.Command;
+import com.dataaccess.finalactivityRP2627.controller.commands.HelpCommand;
+import com.dataaccess.finalactivityRP2627.repository.DBConnector;
 
 public class CommandController {
 
-    private final PassengerService passengerService;
-
-    public CommandController(PassengerService passengerService) {
-        this.passengerService = passengerService;
+    public CommandController() {
     }
 
     public void execute(String[] args) {
-        if (args == null || args.length == 0) {
-            System.out.println(AppUtils.getHelpText());
+        if (args == null || args.length == 0 || (args[0].equals("-h") || args[0].equals("--help"))) {
+            new HelpCommand().execute(args);
             return;
         }
 
-        String command = args[0];
-
-        switch (command) {
-            case "-h", "--help" -> System.out.println(AppUtils.getHelpText());
-            case "-a", "--add" -> {
-                if (args.length != 2) {
-                    System.out.println("Error: --add requires exactly one XML filename.");
-                    System.out.println(AppUtils.getHelpText());
-                    return;
-                }
-
-                Path xmlPath = Paths.get(args[1]);
-                passengerService.addPassengersFromXml(xmlPath);
-            }
-            default -> {
-                System.out.println(AppUtils.getHelpText());
-            }
+        if (!DBConnector.isDatabaseAvailable()) {
+            System.err.println("Error: Database is not available. Check database.properties.");
+            return;
         }
+
+        Command command = switch (args[0]) {
+            case "-a", "--add" -> new AddPassengerCommand();
+            default -> new HelpCommand();
+        };
+
+        command.execute(args);
     }
 }
