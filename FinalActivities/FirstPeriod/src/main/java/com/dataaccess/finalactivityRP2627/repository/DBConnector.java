@@ -33,6 +33,7 @@ public class DBConnector {
         String url = config.getProperty("url");
         String user = config.getProperty("user");
         String password = config.getProperty("password");
+        String schema = config.getProperty("schema");
 
         if (url == null || url.isBlank() || user == null || user.isBlank() || password == null) {
             throw new IOException("Database configuration is incomplete.");
@@ -41,6 +42,9 @@ public class DBConnector {
         Properties connectionProperties = new Properties();
         connectionProperties.setProperty("user", user);
         connectionProperties.setProperty("password", password);
+        if (schema != null && !schema.isBlank()) {
+            connectionProperties.setProperty("currentSchema", schema);
+        }
 
         try {
             Class.forName("org.postgresql.Driver");

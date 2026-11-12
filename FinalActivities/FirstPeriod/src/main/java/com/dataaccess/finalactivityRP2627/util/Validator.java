@@ -2,6 +2,10 @@ package com.dataaccess.finalactivityRP2627.util;
 
 import com.dataaccess.finalactivityRP2627.model.Passenger;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,21 @@ public class Validator {
         }
 
         return errors;
+    }
+
+    public boolean isValidIata(String code) {
+        return code != null && code.matches("^[A-Za-z]{3}$");
+    }
+
+    public LocalDate parseDate(String text) {
+        if (isBlank(text)) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(text.trim(), DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT));
+        } catch (DateTimeParseException exception) {
+            return null;
+        }
     }
 
     private boolean isBlank(String value) {

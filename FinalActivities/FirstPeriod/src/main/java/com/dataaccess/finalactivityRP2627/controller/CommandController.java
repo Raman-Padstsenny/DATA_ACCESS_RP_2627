@@ -2,7 +2,9 @@ package com.dataaccess.finalactivityRP2627.controller;
 
 import com.dataaccess.finalactivityRP2627.controller.commands.AddPassengerCommand;
 import com.dataaccess.finalactivityRP2627.controller.commands.Command;
+import com.dataaccess.finalactivityRP2627.controller.commands.FlightsCommand;
 import com.dataaccess.finalactivityRP2627.controller.commands.HelpCommand;
+import com.dataaccess.finalactivityRP2627.controller.commands.OriginsCommand;
 import com.dataaccess.finalactivityRP2627.repository.DBConnector;
 
 public class CommandController {
@@ -23,6 +25,8 @@ public class CommandController {
 
         Command command = switch (args[0]) {
             case "-a", "--add" -> new AddPassengerCommand();
+            case "-f", "--flights" -> new FlightsCommand();
+            case "-o", "--origins" -> new OriginsCommand();
             default -> new HelpCommand();
         };
 

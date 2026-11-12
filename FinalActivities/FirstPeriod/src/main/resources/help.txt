@@ -11,7 +11,7 @@ Options:
   -a, --add <filename.xml>
       Add passengers from an XML file to the database.
 
-  -f, --flight <origin> <destination> <date>
+  -f, --flights <origin> <destination> <date>
       Display available flights between origin and destination on a specific date.
 
   -b, --buy <passengerId> <flightId> <date>

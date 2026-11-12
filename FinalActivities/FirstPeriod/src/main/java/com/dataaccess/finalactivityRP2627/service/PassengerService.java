@@ -1,7 +1,6 @@
 package com.dataaccess.finalactivityRP2627.service;
 
 import com.dataaccess.finalactivityRP2627.model.Passenger;
-import com.dataaccess.finalactivityRP2627.repository.DBConnector;
 import com.dataaccess.finalactivityRP2627.repository.Repository;
 import com.dataaccess.finalactivityRP2627.util.AppUtils;
 import com.dataaccess.finalactivityRP2627.util.Validator;
@@ -9,7 +8,7 @@ import com.dataaccess.finalactivityRP2627.util.XmlParser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,22 +81,14 @@ public class PassengerService {
             return;
         }
 
-        try (Connection connection = DBConnector.getConnection()) {
-            connection.setAutoCommit(false);
-            try {
-                for (Passenger passenger : passengers) {
-                    repository.savePassenger(passenger, connection);
-                }
-                connection.commit();
-                System.out.println(passengers.size() + " passenger(s) added successfully.");
-                LOGGER.info(passengers.size() + " passenger(s) imported successfully.");
-            } catch (Exception exception) {
-                connection.rollback();
-                System.out.println("Import aborted. No passengers were added. Reason: " + exception.getMessage());
-                LOGGER.severe("Passenger import failed. Transaction rolled back: " + exception.getMessage());
-            }
-
-        } catch (Exception exception ) {
+        try {
+            repository.savePassengers(passengers);
+            System.out.println(passengers.size() + " passenger(s) added successfully.");
+            LOGGER.info(passengers.size() + " passenger(s) imported successfully.");
+        } catch (SQLException exception) {
+            System.out.println("Import aborted. No passengers were added. Reason: " + exception.getMessage());
+            LOGGER.severe("Passenger import failed. Transaction rolled back: " + exception.getMessage());
+        } catch (Exception exception) {
             System.out.println("Database error: " + exception.getMessage());
             LOGGER.severe("Database connection error: " + exception.getMessage());
         }
