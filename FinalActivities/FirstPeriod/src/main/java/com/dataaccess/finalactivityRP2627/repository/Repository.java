@@ -94,4 +94,106 @@ public class Repository {
         }
         return airports;
     }
+
+    public List<Airport> findDestinationAirports(String origin) throws SQLException, IOException {
+        String sql = "SELECT DISTINCT d.iata, d.name, c.name AS city, c.country "
+                + "FROM flights f "
+                + "JOIN airports s ON s.code = f.source "
+                + "JOIN airports d ON d.code = f.destination "
+                + "JOIN cities c ON c.code = d.city "
+                + "WHERE s.iata = ? "
+                + "ORDER BY d.iata";
+        List<Airport> airports = new ArrayList<>();
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, origin);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    airports.add(new Airport(
+                            resultSet.getString("iata"),
+                            resultSet.getString("name"),
+                            resultSet.getString("city"),
+                            resultSet.getString("country")));
+                }
+            }
+        }
+        return airports;
+    }
+
+    public boolean airportExists(String iata) throws SQLException, IOException {
+        String sql = "SELECT 1 FROM airports WHERE iata = ?";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, iata);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public boolean passengerExists(String passportNo) throws SQLException, IOException {
+        String sql = "SELECT 1 FROM passengers WHERE passportno = ?";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, passportNo);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public Integer findTotalSeats(String flightCode) throws SQLException, IOException {
+        String sql = "SELECT p.total_seats FROM flights f "
+                + "JOIN planes p ON p.plane_id = f.plane "
+                + "WHERE f.flight_code = ?";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, flightCode);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? resultSet.getInt("total_seats") : null;
+            }
+        }
+    }
+
+    public boolean hasActiveTicketOnDate(String passportNo, LocalDate date) throws SQLException, IOException {
+        String sql = "SELECT 1 FROM tickets WHERE passportno = ? AND date_of_travel = ? "
+                + "AND date_of_cancellation IS NULL";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, passportNo);
+            statement.setDate(2, Date.valueOf(date));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public int countActiveTickets(String flightCode, LocalDate date) throws SQLException, IOException {
+        String sql = "SELECT COUNT(*) FROM tickets WHERE flight_code = ? AND date_of_travel = ? "
+                + "AND date_of_cancellation IS NULL";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setString(1, flightCode);
+            statement.setDate(2, Date.valueOf(date));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                return resultSet.getInt(1);
+            }
+        }
+    }
+
+    public int insertTicket(String passportNo, String flightCode, LocalDate date) throws SQLException, IOException {
+        String sql = "INSERT INTO tickets (date_of_booking, date_of_travel, passportno, flight_code, price) "
+                + "VALUES (CURRENT_DATE, ?, ?, ?, 12345) RETURNING ticket_number";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setDate(1, Date.valueOf(date));
+            statement.setString(2, passportNo);
+            statement.setString(3, flightCode);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                return resultSet.getInt(1);
+            }
+        }
+    }
 }

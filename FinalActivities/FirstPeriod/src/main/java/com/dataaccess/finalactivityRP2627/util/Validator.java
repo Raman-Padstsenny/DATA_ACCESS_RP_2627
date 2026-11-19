@@ -38,6 +38,14 @@ public class Validator {
         return code != null && code.matches("^[A-Za-z]{3}$");
     }
 
+    public boolean isValidPassportNo(String passportNo) {
+        return passportNo != null && passportNo.matches("^[A-Za-z]\\d{7}$");
+    }
+
+    public boolean isValidFlightCode(String flightCode) {
+        return flightCode != null && flightCode.matches("^[A-Za-z0-9]{1,10}$");
+    }
+
     public LocalDate parseDate(String text) {
         if (isBlank(text)) {
             return null;

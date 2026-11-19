@@ -95,4 +95,40 @@ public class FlightService {
             LOGGER.severe("Origins listing failed: " + exception.getMessage());
         }
     }
+
+    public void showDestinations(String origin) {
+        if (!validator.isValidIata(origin)) {
+            System.out.println("Error: Origin must be a 3-letter IATA code.");
+            LOGGER.warning("Destinations: invalid origin " + origin);
+            return;
+        }
+
+        String originCode = origin.toUpperCase();
+
+        try {
+            if (!repository.airportExists(originCode)) {
+                System.out.println("Error: Airport " + originCode + " does not exist.");
+                LOGGER.warning("Destinations: unknown airport " + originCode);
+                return;
+            }
+
+            List<Airport> airports = repository.findDestinationAirports(originCode);
+
+            if (airports.isEmpty()) {
+                System.out.println("No destinations are reachable from " + originCode + ".");
+                LOGGER.info("No destinations found from " + originCode);
+                return;
+            }
+
+            System.out.println("Destinations reachable from " + originCode + ":");
+            System.out.printf("%-5s %-45s %-15s %-15s%n", "IATA", "Airport", "City", "Country");
+            for (Airport airport : airports) {
+                System.out.printf("%-5s %-45s %-15s %-15s%n", airport.getIata(), airport.getName(), airport.getCity(), airport.getCountry());
+            }
+            LOGGER.info(airports.size() + " destination(s) listed from " + originCode);
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            LOGGER.severe("Destinations listing failed: " + exception.getMessage());
+        }
+    }
 }
