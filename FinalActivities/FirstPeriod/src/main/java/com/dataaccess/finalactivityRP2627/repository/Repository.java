@@ -56,7 +56,7 @@ public class Repository {
         try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
             statement.setString(1, origin);
             statement.setString(2, destination);
-            statement.setString(3, Date.valueOf(date).toString());
+            statement.setDate(3, Date.valueOf(date));
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
