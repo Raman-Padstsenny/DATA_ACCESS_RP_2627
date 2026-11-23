@@ -168,6 +168,19 @@ public class Repository {
         }
     }
 
+    public boolean cancelTicketOnDate(String passportNo, LocalDate date) throws SQLException, IOException {
+        String sql = "UPDATE tickets set date_of_cancelation = ? WHERE passportno = ? AND date_of_travel = ? ";
+
+        try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
+            statement.setDate(1, Date.valueOf(LocalDate.now()));
+            statement.setString(2, passportNo);
+            statement.setDate(3, Date.valueOf(date));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
     public int countActiveTickets(String flightCode, LocalDate date) throws SQLException, IOException {
         String sql = "SELECT COUNT(*) FROM tickets WHERE flight_code = ? AND date_of_travel = ? "
                 + "AND date_of_cancellation IS NULL";

@@ -80,4 +80,52 @@ public class TicketService {
         System.out.println("Purchase rejected: " + reason);
         LOGGER.warning("Ticket purchase rejected: " + reason);
     }
+
+    public void cancelTicket(String passportNo, String dateText) {
+        List<String> errors = new ArrayList<>();
+
+        if (!validator.isValidPassportNo(passportNo)) {
+            errors.add("Passenger id must be a passport number: one letter followed by 7 digits.");
+        }
+
+        LocalDate date = validator.parseDate(dateText);
+        if (date == null || date.isBefore(LocalDate.now())) {
+            errors.add("Date must be a valid date in format YYYY-MM-DD and cannot be in the past.");
+        }
+
+        if (!errors.isEmpty()) {
+            for (String error : errors) {
+                System.out.println("Error: " + error);
+                LOGGER.warning("Ticket purchase: " + error);
+            }
+            return;
+        }
+        String passport = passportNo.toUpperCase();
+
+        try {
+            if (!repository.passengerExists(passport)) {
+                reject("passenger " + passport + " does not exist.");
+                return;
+            }
+
+            if (!repository.hasActiveTicketOnDate(passport, date)) {
+                reject("passenger " + passport + " doesn´t have a ticket on " + date + ". Nothing to cancel");
+                return;
+            }
+
+            if (repository.cancelTicketOnDate(passportNo, date)) {
+                System.out.println("Ticket  purchased for passenger " + passport
+                        + " on date " + date + " is cancelled.");
+                LOGGER.info("Ticket  purchased for passenger " + passport
+                        + " on date " + date + " is cancelled.");
+            } else {
+                System.out.println("Ticket  purchased for passenger " + passport
+                        + " on date " + date + " can´t be cancelled.");
+                LOGGER.info("Ticket  purchased for passenger " + passport
+                        + " on date " + date + " can´t be cancelled.");            }
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            LOGGER.severe("Ticket canceling failed: " + exception.getMessage());
+        }
+    }
 }
