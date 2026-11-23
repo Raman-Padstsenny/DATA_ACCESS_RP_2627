@@ -11,7 +11,8 @@ RETURNS TABLE (
     departure   TIME,
     arrival     TIME,
     duration    INTEGER,
-    free_seats  INTEGER
+    free_seats  INTEGER,
+    total_seats  INTEGER
 )
 LANGUAGE plpgsql
 STABLE
@@ -25,7 +26,8 @@ BEGIN
            f.departure,
            f.arrival,
            f.duration,
-           (p.total_seats - COUNT(t.ticket_number))::INTEGER AS free_seats
+           (p.total_seats - COUNT(t.ticket_number))::INTEGER AS free_seats,
+            p.total_seats
     FROM flights f
     JOIN airports src ON src.code = f.source
     JOIN airports dst ON dst.code = f.destination

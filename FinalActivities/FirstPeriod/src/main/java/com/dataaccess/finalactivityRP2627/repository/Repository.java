@@ -49,13 +49,14 @@ public class Repository {
     public List<Flight> findAvailableFlights(String origin, String destination, LocalDate date)
             throws SQLException, IOException {
 //        see the SQL of the function that was created in supabase DB in the resources/sql/functions_RP_2627.sql
-        String sql = "SELECT flight_code, airline, origin, destination, departure, arrival, duration, free_seats FROM get_available_flights_RP_2627(?, ?, ?)";
+        String sql = "SELECT flight_code, airline, origin, destination, departure, arrival, " +
+                "duration, free_seats, total_seats FROM get_available_flights_RP_2627(?, ?, ?)";
         List<Flight> flights = new ArrayList<>();
 
         try (PreparedStatement statement = DBConnector.getConnection().prepareStatement(sql)) {
             statement.setString(1, origin);
             statement.setString(2, destination);
-            statement.setDate(3, Date.valueOf(date));
+            statement.setString(3, Date.valueOf(date).toString());
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -67,7 +68,8 @@ public class Repository {
                             resultSet.getTime("departure").toLocalTime(),
                             resultSet.getTime("arrival").toLocalTime(),
                             resultSet.getInt("duration"),
-                            resultSet.getInt("free_seats")));
+                            resultSet.getInt("free_seats"),
+                            resultSet.getInt("total_seats")));
                 }
             }
         }

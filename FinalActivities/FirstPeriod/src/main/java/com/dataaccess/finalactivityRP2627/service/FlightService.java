@@ -56,15 +56,16 @@ public class FlightService {
             }
 
             System.out.println("Available flights from " + originCode + " to " + destinationCode + " on " + date + ":");
-            System.out.printf("%-10s %-20s %-9s %-9s %-10s %-10s%n", "Flight", "Airline", "Departure", "Arrival", "Duration", "Free seats");
+            System.out.printf("%-10s %-20s %-9s %-9s %-10s %-10s%n %-10s%n", "Flight", "Airline", "Departure", "Arrival", "Duration", "Total seats", "Sold seats");
             for (Flight flight : flights) {
-                System.out.printf("%-10s %-20s %-9s %-9s %-10s %-10d%n",
+                System.out.printf("%-10s %-20s %-9s %-9s %-10s %-10d%n %-10d%n",
                         flight.getFlightCode(),
                         flight.getAirline(),
                         flight.getDeparture(),
                         flight.getArrival(),
                         flight.getDuration() + " min",
-                        flight.getFreeSeats());
+                        flight.getTotalSeats(),
+                        flight.getSoldSeats());
             }
             LOGGER.info(flights.size() + " flight(s) found " + originCode + " -> " + destinationCode + " on " + date);
         } catch (Exception exception) {

@@ -12,6 +12,7 @@ public class Flight {
     private final LocalTime arrival;
     private final int duration;
     private final int freeSeats;
+    private final int totalSeats;
 
     public Flight(String flightCode,
                   String airline,
@@ -20,7 +21,8 @@ public class Flight {
                   LocalTime departure,
                   LocalTime arrival,
                   int duration,
-                  int freeSeats) {
+                  int freeSeats,
+                  int totalSeats) {
         this.flightCode = flightCode;
         this.airline = airline;
         this.origin = origin;
@@ -29,6 +31,7 @@ public class Flight {
         this.arrival = arrival;
         this.duration = duration;
         this.freeSeats = freeSeats;
+        this.totalSeats = totalSeats;
     }
 
     public String getFlightCode() {
@@ -61,5 +64,13 @@ public class Flight {
 
     public int getFreeSeats() {
         return freeSeats;
+    }
+
+    public int getTotalSeats() {
+        return totalSeats;
+    }
+
+    public int getSoldSeats() {
+        return totalSeats-freeSeats;
     }
 }
