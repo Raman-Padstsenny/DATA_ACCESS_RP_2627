@@ -4,6 +4,7 @@ import com.dataaccess.finalactivityRP2627.repository.Repository;
 import com.dataaccess.finalactivityRP2627.util.AppUtils;
 import com.dataaccess.finalactivityRP2627.util.Validator;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,15 @@ public class TicketService {
         this.repository = repository;
     }
 
-    public void buyTicket(String passportNo, String flightCode, String dateText) {
+    public void printTicket(int number, String passport, String flight, LocalDate date) {
+        File file = new File("Ticket" + number);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            writer.write("Ticket number " + number + "Passenger id " + passport + "Flight id " + flight + "Date " + date.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void buyTicket(String passportNo, String flightCode, String dateText, boolean print) {
         List<String> errors = new ArrayList<>();
 
         if (!validator.isValidPassportNo(passportNo)) {
@@ -67,6 +76,9 @@ public class TicketService {
             }
 
             int ticketNumber = repository.insertTicket(passport, flight, date);
+            if (print) {
+               printTicket(ticketNumber, passport, flight, date);
+            }
             System.out.println("Ticket " + ticketNumber + " purchased for passenger " + passport
                     + " on flight " + flight + " (" + date + ").");
             LOGGER.info("Ticket " + ticketNumber + " purchased: " + passport + ", " + flight + ", " + date);
